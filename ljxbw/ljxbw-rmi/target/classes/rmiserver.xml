@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<context:component-scan base-package="com.wenjin.zhu"></context:component-scan>
+	<bean id="rmiServiceExporter" class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<!-- 业务实现类 -->
+		<property name="service" ref="rmiServerImpl" />
+		<!-- 对外客户端的连接名字 -->
+		<property name="serviceName" value="WenServer" />
+		<!-- 对外客户端的访问端口 -->
+		<property name="registryPort" value="1099" />
+		<!-- 业务接口类 -->
+		<property name="serviceInterface" value="com.wenjin.zhu.rmi.server.RmiServer" />
+	</bean>
+</beans>

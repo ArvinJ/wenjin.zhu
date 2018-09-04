@@ -1,0 +1,47 @@
+下载安装ActiveMQ
+下载完安装包，解压之后的目录：
+bin存放的是脚本文件
+conf存放的是基本配置文件
+data存放的是日志文件
+docs存放的是说明文档
+examples存放的是简单的实例
+lib存放的是activemq所需jar包
+webapps用于存放项目的目录
+
+进入到ActiveMQ 安装目录的Bin 目录，linux 下输入 ./activemq start 启动activeMQ 服务。
+输入命令之后，会提示我们创建了一个进程IP 号，这时候说明服务已经成功启动了。
+
+ActiveMQ默认启动时，启动了内置的jetty服务器，提供一个用于监控ActiveMQ的admin应用。 
+http://127.0.0.1:8161/admin/
+
+Number Of Pending Messages消息队列中剩余的消息
+Messages Enqueued生产者生产的总消息
+Messages Dequeued消费者消费的消息  
+Number Of Consumers消费者的个数  
+
+我们在浏览器打开链接之后输入账号密码（这里和tomcat 服务器类似）
+
+　　默认账号：admin
+
+　　密码：admin
+
+点对点模式
+点对点： 
+消息生产者生产消息发送到queue中，然后消息消费者从queue中取出并且消费消息。这里要注意： 
+消息被消费以后，queue中不再有存储，所以消息消费者不可能消费到已经被消费的消息。 
+Queue支持存在多个消费者，但是对一个消息而言，只会有一个消费者可以消费。 
+
+发布与订阅模式
+发布/订阅 
+消息生产者（发布）将消息发布到topic中，同时有多个消息消费者（订阅）消费该消息。和点对点方式不同，发布到topic的消息会被所有订阅者消费。
+
+-- 集群
+    <amq:connectionFactory id="amqConnectionFactory"   
+        brokerURL="failover:(tcp://172.16.53.27:61616,tcp://172.16.53.29:61617,tcp://172.16.53.30:61618)"   
+        userName="admin"   
+        password="admin" />   
+-- 单击    
+    <amq:connectionFactory id="amqConnectionFactory"   
+        brokerURL="tcp://localhost:61616"   
+        userName="admin"   
+        password="admin" />   

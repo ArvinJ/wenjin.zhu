@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	default-lazy-init="true">
+
+	<!-- web.xml中shiro的filter对应的bean -->
+	<!-- Shiro 的Web过滤器 -->
+	<!-- 启用shrio授权注解拦截方式 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- 装配 securityManager -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 自定义filter配置 -->
+		<property name="filters">
+			<util:map>
+				<entry key="ssl" value-ref="sslFilter" />
+			</util:map>
+		</property>
+		<!-- 具体配置需要拦截哪些 URL, 以及访问对应的 URL 时使用 Shiro 的什么 Filter 进行拦截. -->
+		<!-- 过虑器链定义，从上向下顺序执行，一般将/**放在最下边 -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!-- 对静态资源设置匿名访问 -->
+				/** = ssl
+				/static/** = anon
+				/images/** = anon
+				/js/** = anon
+				/styles/** = anon
+
+			</value>
+		</property>
+	</bean>
+
+	<bean id="sslFilter" class="org.apache.shiro.web.filter.authz.SslFilter">
+		<property name="port" value="8443" />
+	</bean>
+
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" />
+
+</beans>

@@ -1,0 +1,158 @@
+一、kafka 环境安装搭建
+1.安装jdk  前提要有jdk环境 
+2.先 安装 zookeeper
+            1> 下载地址：http://mirrors.hust.edu.cn/apache/zookeeper/
+                                             下载后解压到一个目录：D:\Arvin\soft\zookeeper\zookeeper-3.4.10
+                                              在zookeeper-3.4.10目录下，
+                                              新建文件夹  如	D:\Arvin\soft\zookeeper\zookeeper-3.4.10\conf\data
+                                              
+            2>进入Zookeeper设置目录D:\Arvin\soft\zookeeper\zookeeper-3.4.10\conf
+                                          复制“zoo_sample.cfg”副本à并将副本重命名为“zoo.cfg”
+			      打开zoo.cfg找到并编辑
+			  #dataDir=/tmp/zookeeper 
+			  dataDir=D:/Arvin/soft/zookeeper/zookeeper-3.4.10/conf/data
+
+ 			3>添加系统环境变量：
+                                          在系统变量中添加ZOOKEEPER_HOME = D:\Java\Tool\zookeeper-3.4.10
+			      编辑path系统变量，添加为路径%ZOOKEEPER_HOME%\bin
+			     在zoo.cfg文件中修改默认的Zookeeper端口（默认端口2181）
+			     打开新的cmd，输入zkServer，运行Zookeeper。
+			  
+			  
+			4>Dos下运行：zkserver
+ 			      看到binding to port 0.0.0.0/0.0.0.0:2181 命令行提示如下：说明本地Zookeeper启动成功
+			  zookeeper搭建成功.
+
+
+3.Kafka：
+       		1>安装包：kafka_2.12-1.0.0.tgz
+       		     下载地址：http://kafka.apache.org/downloads.html
+       		     推荐版本：kafka_2.12-1.0.0.tgz
+			     下载后解压缩。D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0
+ 
+ 			2>建立一个空文件夹 logs. D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0\logs 
+                                          进入config目录，编辑 server.properties文件
+                                           找到并编辑
+				#log.dirs=/tmp/kafka-logs
+				log.dirs=D:/Arvin/soft/kafka/kafka_2.12-2.0.0/kafka_2.12-2.0.0/logs
+
+      		3>找到并编辑zookeeper.connect=localhost:2181。表示本地运行。
+       		(Kafka会按照默认，在9092端口上运行，并连接zookeeper的默认端口：2181)
+			运行：请确保在启动Kafka服务器前，Zookeeper实例已经准备好并开始运行。（就是开着Zookeeper窗口不要关）
+			
+			4>cmd 进入 dos 窗口
+			定位当前位置 为 D:/Arvin/soft/kafka/kafka_2.12-2.0.0/kafka_2.12-2.0.0/  目录下
+			执行  .\bin\windows\kafka-server-start.bat  .\config\server.properties
+
+4.测试
+上面的Zookeeper和kafka一直打开
+
+1>创建主题
+1.cmd 进入 dos 窗口定位当前位置 为Kafka的安装目录 D:/Arvin/soft/kafka/kafka_2.12-2.0.0/kafka_2.12-2.0.0/ 
+2.现在输入  
+D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0>
+.\bin\windows\kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic amy
+注意不要关了这个窗口！
+
+删除主题
+.\bin\windows\kafka-topics.bat --delete --zookeeper localhost:2181 --topic amy 
+注：只有当delete.topic.enable=true时，该操作才有效
+.\config\server.properties 文件加入  delete.topic.enable=true
+
+
+2>创建生产者
+
+1.cmd 进入 dos 窗口定位当前位置 为Kafka的安装目录 D:/Arvin/soft/kafka/kafka_2.12-2.0.0/kafka_2.12-2.0.0/bin/windows
+2.现在输入 
+D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0>bin>windows>
+kafka-console-producer.bat --broker-list localhost:9092 --topic amy
+注意不要关了这个窗口！
+
+3>创建消费者
+1.cmd 进入 dos 窗口定位当前位置 为Kafka的安装目录 D:/Arvin/soft/kafka/kafka_2.12-2.0.0/kafka_2.12-2.0.0/bin/windows
+2.现在输入 
+D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0\bin\windows>
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic amy --from-beginning
+
+注意 这种启动命令是用于0.90版本之后启动消费者的方法
+之前用的是
+D:\Arvin\soft\kafka\kafka_2.12-2.0.0\kafka_2.12-2.0.0\bin\windows>
+kafka-console-consumer.bat --zookeeper localhost:2181 --topic amy
+注意不要关了这个窗口！
+
+4>测试
+然后在生产的窗口中输入内容，最后记得回车，此时我们在消费的窗口中也可以看到同样 的信息了。
+
+
+更改日志输出级别
+kafka0.8版本中，config/log4j.properties中日志的级别设置的是TRACE，
+在长时间运行过程中产生的日志大小吓人，所以如果没有特殊需求，强烈建议将其更改成INFO级别。
+具体修改方法如下所示，将config/log4j.properties文件中最后的几行中的TRACE改成INFO.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+使用KafkaProducer类的实例来创建一个Producer，KafkaProducer类的参数是一系列属性值
+bootstrap.servers
+properties.put("bootstrap.servers", "192.168.1.110:9092");
+bootstrap.servers是Kafka集群的IP地址，如果Broker数量超过1个，则使用逗号分隔，
+如"192.168.1.110:9092,192.168.1.110:9092"。其中，192.168.1.110是我的其中一台虚拟机的IP地址，9092是所监听的端口
+
+key.serializer   &  value.serializer
+properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+ 序列化类型。
+  Kafka消息是以键值对的形式发送到Kafka集群的，其中Key是可选的，Value可以是任意类型。
+  但是在Message被发送到Kafka集群之前，Producer需要把不同类型的消息序列化为二进制类型。
+  本例是发送文本消息到Kafka集群，所以使用的是StringSerializer。
+  
+  发送Message到Kafka集群
+   for (int i = 0; i < 100; i++) {
+      String msg = "Message " + i;
+      producer.send(new ProducerRecord<String, String>("HelloWorld", msg));
+      System.out.println("Sent:" + msg);
+   }
+   上述代码会发送100个消息到HelloWorld这个Topic
+   
+   
+   
+   
+   
+   
+使用KafkaConsumer类的实例来创建一个Consumer，KafkaConsumer类的参数是一系列属性值，下面分析一下所使用到的重要的属性：
+
+bootstrap.servers
+　　  和Producer一样，是指向Kafka集群的IP地址，以逗号分隔。
+
+group.id
+　　   Consumer分组ID
+
+key.deserializer and value.deserializer
+　　   反序列化。
+Consumer把来自Kafka集群的二进制消息反序列化为指定的类型。
+因本例中的Producer使用的是String类型，所以调用StringDeserializer来反序列化
+
+Consumer订阅了Topic为HelloWorld的消息，Consumer调用poll方法来轮循Kafka集群的消息，
+其中的参数100是超时时间（Consumer等待直到Kafka集群中没有消息为止）：
+kafkaConsumer.subscribe(Arrays.asList("HelloWorld"));
+        while (true) {
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.printf("offset = %d, value = %s", record.offset(), record.value());
+                System.out.println();
+            }
+        }
+
+
+
+
